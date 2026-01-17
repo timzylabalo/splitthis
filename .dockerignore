@@ -1,0 +1,71 @@
+server {
+    listen 8080;
+    server_name localhost;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # Gzip compression for better performance
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/xml+rss application/json application/javascript;
+
+    # Security headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+
+    location / {
+        # Try to serve file directly, otherwise redirect to index.html (SPA routing)
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Cache static assets for better performance
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+        expires 1y;
+        add_header Cache-Control "public, no-transform, immutable";
+    }
+
+    # Don't cache index.html to ensure users get latest version
+    location = /index.html {
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+        expires 0;
+    }
+
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+        root /usr/share/nginx/html;
+    }
+}
+```
+
+6. Save and close
+
+#### File 3: Create `.dockerignore`
+
+1. Open **Notepad** (from Start menu)
+2. Copy and paste this:
+```
+node_modules
+dist
+dist-ssr
+.git
+.gitignore
+.env.local
+.env
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.vscode
+.idea
+README.md
